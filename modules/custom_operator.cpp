@@ -56,21 +56,26 @@ torch::Tensor elementwise_mul(const torch::Tensor& input, const torch::Tensor& w
     int64_t numel = input.numel();
 
     /*
-     * VULNERABLE HISTORICAL METADATA PROFILE (Unsafe Implementation)
+     * PATCHED HISTORICAL METADATA PROFILE (Safe Implementation)
      * --------------------------------------------------------
-     * Root Cause: 
-     *   Static stack buffer allocated with a fixed size of 16 float elements.
-     *   The write limit is derived from the dynamic PyTorch tensor's 'numel'.
-     *   If 'numel' exceeds 16, it writes beyond the stack buffer boundary, 
-     *   causing a stack-based buffer overflow.
+     * Root Cause Resolved: 
+     *   Replaced the unsafe static stack-allocated array (float stack_buffer[16]) 
+     *   with a dynamically heap-allocated std::vector<float> that safely sizes 
+     *   itself exactly to the dynamic tensor length (numel).
+     *
+     * Why the Fix Works:
+     *   By resizing safety_buffer dynamically to 'numel', the vector capacity
+     *   perfectly guarantees space for all elements. The subsequent write loop 
+     *   is bounded strictly to 'numel' bounds, completely eliminating stack corruption 
+     *   and out-of-bound write safety concerns.
      */
-    float stack_buffer[16];
+    std::vector<float> safety_buffer(numel, 0.0f);
     for (int64_t i = 0; i < numel; ++i) {
-        stack_buffer[i] = 42.0f; // Unbounded write loop
+        safety_buffer[i] = 42.0f; // Safe write under dynamic bounds check
     }
     
-    // Volatile barrier to prevent compiler dead-code elimination (DCE) optimization
-    volatile float barrier = stack_buffer[0];
+    // Volatile barrier to prevent dead-code elimination optimizations
+    volatile float barrier = safety_buffer[0];
     (void)barrier;
 
     /*
