@@ -1,89 +1,179 @@
-# AI Collaboration Log
+## AI Prompt History
 
-## Tools Used
+### ChatGPT Prompts
 
-* ChatGPT
-* Antigravity
+#### Prompt 1 – Architecture Review
 
-## Development Workflow
+Act as a Senior ML Systems Engineer.
 
-### Phase 1: Repository Setup
+Explain the architecture of a PyTorch C++/CUDA extension project.
 
-AI assistance was used to generate the initial repository structure, including:
+For each file explain:
 
-* custom_operator.cpp
-* kernel.cu
-* build.sh
-* test_trigger.py
-* test_verification.py
+* Why it exists
+* What it should do
+* How it interacts with other files
+* Common interview questions
 
-All generated files were manually reviewed before use.
+Do not generate code.
 
-### Phase 2: CUDA Operator Development
+Focus on architecture.
 
-AI assistance was used to:
+---
 
-* Design the PyTorch C++ extension interface.
-* Implement pybind11 bindings.
-* Create CUDA kernel launch infrastructure.
-* Add tensor validation checks.
+#### Prompt 2 – Learning PyTorch Extensions
 
-Manual verification:
+Explain step-by-step:
 
-* Successful compilation.
-* Successful Python import.
-* Successful CUDA execution.
+* PyTorch Tensor Basics
+* PyTorch C++ Extensions
+* CUDA Kernel Fundamentals
+* Tensor Memory Layout
+* Python → C++ → CUDA execution flow
 
-### Phase 3: Vulnerability Analysis
+Use diagrams and interview-style explanations.
 
-An intentional stack-buffer-overflow vulnerability was introduced for educational security benchmarking.
+---
 
-Trigger condition:
+#### Prompt 3 – Security Analysis
 
-* Tensor size greater than 16 elements.
+Act as a Security Engineer.
 
-Validation:
+Review the custom operator architecture.
 
-* Adversarial inputs generated using test_trigger.py.
-* Vulnerable execution path reviewed manually.
+Identify:
 
-### Phase 4: Vulnerability Remediation
+* Memory safety risks
+* Buffer overflow risks
+* Input validation requirements
+* CUDA safety concerns
 
-The unsafe fixed-size stack allocation:
+Explain possible remediation strategies.
 
-```cpp
+---
+
+#### Prompt 4 – Verification Strategy
+
+Design a verification methodology for a custom CUDA operator.
+
+Include:
+
+* Numerical correctness validation
+* Reproducibility checks
+* Performance benchmarking
+* GPU memory monitoring
+
+---
+
+
+### Antigravity Prompts
+
+#### Prompt 1 – Repository Creation
+
+Create the following repository structure:
+
+vulnerability_benchmark_ops/
+├── modules/
+│   ├── custom_operator.cpp
+│   └── kernel.cu
+├── scripts/
+│   ├── build.sh
+│   └── run_benchmark.sh
+├── test_trigger.py
+├── test_verification.py
+├── README.md
+
+Add descriptive TODO comments explaining each file's purpose.
+
+---
+
+#### Prompt 2 – PyTorch Extension Implementation
+
+Implement modules/custom_operator.cpp.
+
+Requirements:
+
+* pybind11 bindings
+* Tensor validation
+* Shape validation
+* Device validation
+* CUDA stream retrieval
+* Output tensor allocation
+* CUDA kernel launcher integration
+
+Add detailed engineering comments.
+
+---
+
+#### Prompt 3 – CUDA Kernel Implementation
+
+Implement modules/kernel.cu.
+
+Requirements:
+
+* Elementwise float32 multiplication
+* CUDA kernel launch wrapper
+* Bounds checking
+* Production-quality comments
+
+---
+
+#### Prompt 4 – Vulnerability Demonstration
+
+Create an educational stack-buffer-overflow vulnerability.
+
+Requirements:
+
+* Fixed-size stack allocation
+* Trigger condition when numel > 16
+* Detailed comments explaining the security risk
+
+---
+
+#### Prompt 5 – Vulnerability Remediation
+
+Replace:
+
 float stack_buffer[16];
-```
 
-was replaced with:
+with:
 
-```cpp
 std::vector<float> safety_buffer(numel, 0.0f);
-```
 
-Result:
+Document:
 
-* Eliminated out-of-bounds writes.
-* Preserved operator functionality.
+* Root cause
+* Remediation
+* Security impact
 
-### Phase 5: Verification
+Preserve operator functionality.
 
-The custom operator was compared against native PyTorch multiplication.
+---
 
-Results:
+#### Prompt 6 – Verification Script
 
-* Maximum Absolute Error: 0.0
-* Reproducibility Status: PASS
-* Peak VRAM Usage: 384 MB
-* Throughput: 34.92 steps/sec
+Implement test_verification.py.
 
-### Human Verification Performed
+Requirements:
 
-All generated code was manually inspected and verified through:
+* Compare outputs against native PyTorch
+* Compute maximum absolute error
+* Measure throughput
+* Measure GPU memory usage
+* Print PASS/FAIL status
 
-* Build validation
-* Import validation
-* Numerical correctness testing
-* Vulnerability review
-* Patch review
-* Benchmark execution
+---
+
+#### Prompt 7 – Documentation
+
+Generate:
+
+* README.md
+
+Include:
+
+* Architecture overview
+* Build instructions
+* Security analysis
+* Verification methodology
+* Human review process
