@@ -16,6 +16,87 @@ The project implements a custom GPU-accelerated elementwise multiplication opera
 
 ---
 
+## Reviewer Walkthrough
+
+### 1. Clone Repository
+
+```bash
+git clone <repository-url>
+cd cuda-operator-security-benchmark
+```
+
+### 2. Inspect the Vulnerable Version
+
+```bash
+git checkout v1.0.0-vulnerable
+```
+
+Review:
+
+```text
+modules/custom_operator.cpp
+```
+
+The vulnerable implementation uses a fixed-size stack buffer:
+
+```cpp
+float stack_buffer[16];
+```
+
+This can lead to a stack-based buffer overflow when tensor sizes exceed the allocated capacity.
+
+---
+
+### 3. Inspect the Patched Version
+
+```bash
+git checkout v1.0.0-patched
+```
+
+Review:
+
+```text
+modules/custom_operator.cpp
+```
+
+The patched implementation replaces the fixed-size stack allocation with:
+
+```cpp
+std::vector<float> safety_buffer(numel, 0.0f);
+```
+
+which dynamically sizes the buffer to the tensor length and eliminates out-of-bounds writes.
+
+---
+
+### 4. Verify Correctness
+
+```bash
+python test_verification.py
+```
+
+Expected result:
+
+```text
+Maximum Absolute Error: 0.0
+Reproducibility Status: PASS
+```
+
+---
+
+### 5. Review Security Documentation
+
+See:
+
+```text
+VULNERABILITY_ANALYSIS.md
+AI_COLLABORATION_LOG.md
+```
+
+for vulnerability details, remediation strategy, verification methodology, and AI-assisted development workflow.
+
+---
+
 # Architecture
 
 ```text
