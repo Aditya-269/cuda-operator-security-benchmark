@@ -53,7 +53,7 @@ vulnerability_benchmark_ops/
 │   └── kernel.cu
 ├── scripts/
 │   ├── build.sh
-│   └── run_benchmark.sh
+│   └── benchmark.sh
 ├── test_trigger.py
 ├── test_verification.py
 ├── AI_COLLABORATION_LOG.md
